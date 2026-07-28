@@ -1,5 +1,5 @@
 import db from "./db";
-import { NewTaskInput, Task, TaskPriority, TaskStatus } from "./types";
+import { NewTaskInput, Task, TaskPriority, TaskSortField, TaskStatus } from "./types";
 
 interface TaskRow {
   id: number;
@@ -37,13 +37,34 @@ const PRIORITY_ORDER_SQL = `
   END DESC
 `;
 
-/** Active, not-yet-complete tasks in default (priority, then soonest due date) order. */
-export function getTasks(): Task[] {
+const STATUS_ORDER_SQL = `
+  CASE status
+    WHEN 'todo' THEN 1
+    WHEN 'in-progress' THEN 2
+    WHEN 'complete' THEN 3
+  END ASC
+`;
+
+// Fixed lookup, not string interpolation of caller input — sort must be a
+// valid TaskSortField (validated at the URL-parsing boundary) to reach here.
+const SORT_ORDER_SQL: Record<TaskSortField, string> = {
+  topic: "topic ASC, due_date ASC",
+  status: `${STATUS_ORDER_SQL}, due_date ASC`,
+  dueDate: "due_date ASC, topic ASC",
+};
+
+/**
+ * Active, not-yet-complete tasks. Defaults to priority (then soonest due
+ * date) order; pass a sort field to order by topic, status or due date
+ * instead.
+ */
+export function getTasks(sort?: TaskSortField): Task[] {
+  const orderBy = sort ? SORT_ORDER_SQL[sort] : `${PRIORITY_ORDER_SQL}, due_date ASC`;
   const rows = db
     .prepare(
       `SELECT * FROM tasks
        WHERE archived_at IS NULL AND status != 'complete'
-       ORDER BY ${PRIORITY_ORDER_SQL}, due_date ASC`,
+       ORDER BY ${orderBy}`,
     )
     .all() as unknown as TaskRow[];
   return rows.map(rowToTask);

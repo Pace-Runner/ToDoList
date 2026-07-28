@@ -47,3 +47,11 @@ export interface NewTaskInput {
 }
 
 export type TaskSortField = "topic" | "status" | "dueDate";
+
+export const TASK_SORT_FIELDS: TaskSortField[] = ["topic", "status", "dueDate"];
+
+export const SORT_LABELS: Record<TaskSortField, string> = {
+  topic: "Topic",
+  status: "Status",
+  dueDate: "Due Date",
+};

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { archiveTaskAction, toggleTaskCompleteAction } from "@/app/actions";
+import { isOverdue } from "@/lib/date";
 import { Task } from "@/lib/types";
 
 const PRIORITY_DOT_COLOR: Record<Task["priority"], string> = {
@@ -16,6 +17,7 @@ export default function TaskRow({
   readOnly?: boolean;
 }) {
   const isComplete = task.status === "complete";
+  const overdue = isOverdue(task);
 
   return (
     <li className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-b-0">
@@ -55,6 +57,9 @@ export default function TaskRow({
         <p className="font-medium text-gray-900 truncate">{task.title}</p>
         <p className="text-sm text-gray-500 truncate">
           {task.topic} &middot; {task.dueDate}
+          {overdue && (
+            <span className="ml-1.5 text-red-600 font-semibold">Overdue</span>
+          )}
         </p>
       </div>
       {!readOnly && (

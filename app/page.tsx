@@ -1,9 +1,23 @@
 import Link from "next/link";
 import { getTasks } from "@/lib/tasks";
+import { TASK_SORT_FIELDS, TaskSortField } from "@/lib/types";
 import TaskRow from "@/components/TaskRow";
+import SortControls from "@/components/SortControls";
 
-export default function HomePage() {
-  const tasks = getTasks();
+function parseSort(value: string | string[] | undefined): TaskSortField | undefined {
+  return TASK_SORT_FIELDS.includes(value as TaskSortField)
+    ? (value as TaskSortField)
+    : undefined;
+}
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string | string[] }>;
+}) {
+  const { sort } = await searchParams;
+  const activeSort = parseSort(sort);
+  const tasks = getTasks(activeSort);
 
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
@@ -28,6 +42,8 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
+
+        <SortControls activeSort={activeSort} />
 
         {tasks.length === 0 ? (
           <p className="text-gray-400 py-6 text-center">No tasks yet.</p>
