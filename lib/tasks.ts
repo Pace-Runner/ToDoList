@@ -46,15 +46,22 @@ const tasks: Task[] = [
 
 let nextId = tasks.length + 1;
 
-/** Active tasks in default (priority, then soonest due date) order. */
+/** Active, not-yet-complete tasks in default (priority, then soonest due date) order. */
 export function getTasks(): Task[] {
   return tasks
-    .filter((t) => t.archivedAt === null)
+    .filter((t) => t.archivedAt === null && t.status !== "complete")
     .sort((a, b) => {
       const byPriority = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority];
       if (byPriority !== 0) return byPriority;
       return a.dueDate.localeCompare(b.dueDate);
     });
+}
+
+/** Active tasks marked complete, most recently completed first. */
+export function getCompletedTasks(): Task[] {
+  return tasks
+    .filter((t) => t.archivedAt === null && t.status === "complete")
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
 export function getArchivedTasks(): Task[] {

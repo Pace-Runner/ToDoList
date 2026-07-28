@@ -1,15 +1,9 @@
-import { STATUS_LABELS, Task } from "@/lib/types";
+import { Task } from "@/lib/types";
 
 const PRIORITY_DOT_COLOR: Record<Task["priority"], string> = {
   high: "bg-red-500",
   medium: "bg-amber-500",
   low: "bg-gray-300",
-};
-
-const STATUS_PILL_COLOR: Record<Task["status"], string> = {
-  todo: "bg-gray-100 text-gray-600",
-  "in-progress": "bg-blue-100 text-blue-700",
-  complete: "bg-green-100 text-green-700",
 };
 
 export default function TaskRow({ task }: { task: Task }) {
@@ -25,11 +19,6 @@ export default function TaskRow({ task }: { task: Task }) {
           {task.topic} &middot; {task.dueDate}
         </p>
       </div>
-      <span
-        className={`text-xs font-medium px-2 py-1 rounded-full shrink-0 ${STATUS_PILL_COLOR[task.status]}`}
-      >
-        {STATUS_LABELS[task.status]}
-      </span>
     </li>
   );
 }

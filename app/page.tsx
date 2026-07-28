@@ -10,12 +10,17 @@ export default function HomePage() {
       <div className="w-full max-w-lg bg-white rounded-3xl shadow-sm p-6 flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
-          <Link
-            href="/tasks/new"
-            className="text-sm font-medium text-blue-600 hover:text-blue-700"
-          >
-            + New
-          </Link>
+          <div className="flex items-center gap-4 text-sm font-medium">
+            <Link
+              href="/completed"
+              className="text-gray-500 hover:text-gray-700"
+            >
+              Completed
+            </Link>
+            <Link href="/tasks/new" className="text-blue-600 hover:text-blue-700">
+              + New
+            </Link>
+          </div>
         </div>
 
         {tasks.length === 0 ? (
