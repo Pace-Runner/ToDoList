@@ -1,4 +1,11 @@
-import { TASK_STATUSES, STATUS_LABELS, TaskStatus } from "@/lib/types";
+import {
+  TASK_STATUSES,
+  STATUS_LABELS,
+  TASK_PRIORITIES,
+  PRIORITY_LABELS,
+  TaskStatus,
+  TaskPriority,
+} from "@/lib/types";
 
 interface TaskFormProps {
   action: (formData: FormData) => void;
@@ -8,6 +15,7 @@ interface TaskFormProps {
     description: string;
     dueDate: string;
     topic: string;
+    priority?: TaskPriority;
     status?: TaskStatus;
   };
   showStatus?: boolean;
@@ -62,6 +70,21 @@ export default function TaskForm({
           defaultValue={defaultValues?.topic}
           className="border rounded px-3 py-2"
         />
+      </label>
+
+      <label className="flex flex-col gap-1">
+        <span className="text-sm font-medium">Priority</span>
+        <select
+          name="priority"
+          defaultValue={defaultValues?.priority ?? "medium"}
+          className="border rounded px-3 py-2"
+        >
+          {TASK_PRIORITIES.map((priority) => (
+            <option key={priority} value={priority}>
+              {PRIORITY_LABELS[priority]}
+            </option>
+          ))}
+        </select>
       </label>
 
       {showStatus && (

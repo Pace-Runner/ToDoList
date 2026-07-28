@@ -6,36 +6,28 @@ export default function HomePage() {
   const tasks = getTasks();
 
   return (
-    <main className="max-w-3xl mx-auto p-8 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Tasks</h1>
-        <Link
-          href="/tasks/new"
-          className="bg-black text-white rounded px-4 py-2 text-sm"
-        >
-          New Task
-        </Link>
-      </div>
+    <main className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">
+      <div className="w-full max-w-lg bg-white rounded-3xl shadow-sm p-6 flex flex-col gap-5">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
+          <Link
+            href="/tasks/new"
+            className="text-sm font-medium text-blue-600 hover:text-blue-700"
+          >
+            + New
+          </Link>
+        </div>
 
-      {tasks.length === 0 ? (
-        <p className="text-gray-500">No tasks yet.</p>
-      ) : (
-        <table className="w-full text-left text-sm">
-          <thead>
-            <tr className="border-b font-medium">
-              <th className="py-2 pr-4">Title</th>
-              <th className="py-2 pr-4">Topic</th>
-              <th className="py-2 pr-4">Due Date</th>
-              <th className="py-2 pr-4">Status</th>
-            </tr>
-          </thead>
-          <tbody>
+        {tasks.length === 0 ? (
+          <p className="text-gray-400 py-6 text-center">No tasks yet.</p>
+        ) : (
+          <ul className="flex flex-col">
             {tasks.map((task) => (
               <TaskRow key={task.id} task={task} />
             ))}
-          </tbody>
-        </table>
-      )}
+          </ul>
+        )}
+      </div>
     </main>
   );
 }

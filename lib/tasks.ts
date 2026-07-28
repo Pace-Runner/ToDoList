@@ -1,4 +1,4 @@
-import { NewTaskInput, Task } from "./types";
+import { NewTaskInput, Task, PRIORITY_WEIGHT } from "./types";
 
 /**
  * In-memory placeholder store. Swapped for SQLite in the next slice — kept
@@ -13,6 +13,7 @@ const tasks: Task[] = [
     dueDate: "2026-07-25",
     topic: "SDP",
     status: "complete",
+    priority: "low",
     archivedAt: null,
     createdAt: "2026-07-20T09:00:00.000Z",
     updatedAt: "2026-07-25T09:00:00.000Z",
@@ -24,16 +25,36 @@ const tasks: Task[] = [
     dueDate: "2026-07-30",
     topic: "SDP",
     status: "in-progress",
+    priority: "high",
     archivedAt: null,
     createdAt: "2026-07-21T09:00:00.000Z",
     updatedAt: "2026-07-21T09:00:00.000Z",
+  },
+  {
+    id: 3,
+    title: "Write the README",
+    description: "Third-party code, database design and running instructions.",
+    dueDate: "2026-08-03",
+    topic: "SDP",
+    status: "todo",
+    priority: "medium",
+    archivedAt: null,
+    createdAt: "2026-07-22T09:00:00.000Z",
+    updatedAt: "2026-07-22T09:00:00.000Z",
   },
 ];
 
 let nextId = tasks.length + 1;
 
+/** Active tasks in default (priority, then soonest due date) order. */
 export function getTasks(): Task[] {
-  return tasks.filter((t) => t.archivedAt === null);
+  return tasks
+    .filter((t) => t.archivedAt === null)
+    .sort((a, b) => {
+      const byPriority = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority];
+      if (byPriority !== 0) return byPriority;
+      return a.dueDate.localeCompare(b.dueDate);
+    });
 }
 
 export function getArchivedTasks(): Task[] {
@@ -53,6 +74,7 @@ export function createTask(input: NewTaskInput): Task {
     dueDate: input.dueDate,
     topic: input.topic,
     status: "todo",
+    priority: input.priority,
     archivedAt: null,
     createdAt: now,
     updatedAt: now,
