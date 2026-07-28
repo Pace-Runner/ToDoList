@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createTask, getTask, updateTask } from "@/lib/tasks";
+import { archiveTask, createTask, getTask, updateTask } from "@/lib/tasks";
 import { TASK_PRIORITIES, TASK_STATUSES, TaskPriority, TaskStatus } from "@/lib/types";
 
 function parsePriority(value: FormDataEntryValue | null): TaskPriority {
@@ -63,4 +63,12 @@ export async function toggleTaskCompleteAction(id: number) {
 
   revalidatePath("/");
   revalidatePath("/completed");
+}
+
+export async function archiveTaskAction(id: number) {
+  archiveTask(id);
+
+  revalidatePath("/");
+  revalidatePath("/completed");
+  revalidatePath("/archived");
 }

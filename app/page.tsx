@@ -12,6 +12,12 @@ export default function HomePage() {
           <h1 className="text-3xl font-bold tracking-tight">Tasks</h1>
           <div className="flex items-center gap-4 text-sm font-medium">
             <Link
+              href="/archived"
+              className="text-gray-500 hover:text-gray-700"
+            >
+              Archived
+            </Link>
+            <Link
               href="/completed"
               className="text-gray-500 hover:text-gray-700"
             >

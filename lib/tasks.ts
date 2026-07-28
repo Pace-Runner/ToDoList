@@ -118,3 +118,14 @@ export function updateTask(
   );
   return getTask(id)!;
 }
+
+/** Flags a task as archived rather than deleting it — it stays in the table, viewable via getArchivedTasks. */
+export function archiveTask(id: number): Task {
+  const now = new Date().toISOString();
+  db.prepare(`UPDATE tasks SET archived_at = ?, updated_at = ? WHERE id = ?`).run(
+    now,
+    now,
+    id,
+  );
+  return getTask(id)!;
+}
