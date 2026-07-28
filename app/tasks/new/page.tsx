@@ -3,6 +3,10 @@ import TaskForm from "@/components/TaskForm";
 import { createTaskAction } from "@/app/actions";
 import { todayISODate } from "@/lib/date";
 
+// Must be re-evaluated per request — otherwise the default due date freezes
+// at whatever "today" was when the app was built.
+export const dynamic = "force-dynamic";
+
 export default function NewTaskPage() {
   return (
     <main className="min-h-screen bg-gray-50 flex flex-col items-center py-10 px-4">

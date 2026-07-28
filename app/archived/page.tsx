@@ -2,6 +2,9 @@ import Link from "next/link";
 import { getArchivedTasks } from "@/lib/tasks";
 import TaskRow from "@/components/TaskRow";
 
+// Always read the current database — this page has no static content to cache.
+export const dynamic = "force-dynamic";
+
 export default function ArchivedPage() {
   const tasks = getArchivedTasks();
 

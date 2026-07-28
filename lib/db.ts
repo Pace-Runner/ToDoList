@@ -12,6 +12,14 @@ function createConnection(): DatabaseSync {
   }
 
   const connection = new DatabaseSync(dbPath);
+
+  // Next's build step collects page data across several worker processes
+  // that each open this same file concurrently. WAL mode lets readers and
+  // a writer coexist, and busy_timeout makes a competing writer wait for
+  // the lock instead of failing immediately with SQLITE_BUSY.
+  connection.exec("PRAGMA journal_mode = WAL;");
+  connection.exec("PRAGMA busy_timeout = 5000;");
+
   const schema = fs.readFileSync(
     path.join(process.cwd(), "db", "schema.sql"),
     "utf-8",
