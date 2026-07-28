@@ -1,91 +1,98 @@
-import { NewTaskInput, Task, PRIORITY_WEIGHT } from "./types";
+import db from "./db";
+import { NewTaskInput, Task, TaskPriority, TaskStatus } from "./types";
 
-/**
- * In-memory placeholder store. Swapped for SQLite in the next slice — kept
- * behind this same function surface so the UI/actions built against it don't
- * need to change.
- */
-const tasks: Task[] = [
-  {
-    id: 1,
-    title: "Set up the project repo",
-    description: "Scaffold the Next.js app and push the first commit.",
-    dueDate: "2026-07-25",
-    topic: "SDP",
-    status: "complete",
-    priority: "low",
-    archivedAt: null,
-    createdAt: "2026-07-20T09:00:00.000Z",
-    updatedAt: "2026-07-25T09:00:00.000Z",
-  },
-  {
-    id: 2,
-    title: "Design the database schema",
-    description: "Decide on columns and constraints for the tasks table.",
-    dueDate: "2026-07-30",
-    topic: "SDP",
-    status: "in-progress",
-    priority: "high",
-    archivedAt: null,
-    createdAt: "2026-07-21T09:00:00.000Z",
-    updatedAt: "2026-07-21T09:00:00.000Z",
-  },
-  {
-    id: 3,
-    title: "Write the README",
-    description: "Third-party code, database design and running instructions.",
-    dueDate: "2026-08-03",
-    topic: "SDP",
-    status: "todo",
-    priority: "medium",
-    archivedAt: null,
-    createdAt: "2026-07-22T09:00:00.000Z",
-    updatedAt: "2026-07-22T09:00:00.000Z",
-  },
-];
+interface TaskRow {
+  id: number;
+  title: string;
+  description: string;
+  due_date: string;
+  topic: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  archived_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
-let nextId = tasks.length + 1;
+function rowToTask(row: TaskRow): Task {
+  return {
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    dueDate: row.due_date,
+    topic: row.topic,
+    status: row.status,
+    priority: row.priority,
+    archivedAt: row.archived_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+const PRIORITY_ORDER_SQL = `
+  CASE priority
+    WHEN 'high' THEN 3
+    WHEN 'medium' THEN 2
+    WHEN 'low' THEN 1
+  END DESC
+`;
 
 /** Active, not-yet-complete tasks in default (priority, then soonest due date) order. */
 export function getTasks(): Task[] {
-  return tasks
-    .filter((t) => t.archivedAt === null && t.status !== "complete")
-    .sort((a, b) => {
-      const byPriority = PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority];
-      if (byPriority !== 0) return byPriority;
-      return a.dueDate.localeCompare(b.dueDate);
-    });
+  const rows = db
+    .prepare(
+      `SELECT * FROM tasks
+       WHERE archived_at IS NULL AND status != 'complete'
+       ORDER BY ${PRIORITY_ORDER_SQL}, due_date ASC`,
+    )
+    .all() as unknown as TaskRow[];
+  return rows.map(rowToTask);
 }
 
 /** Active tasks marked complete, most recently completed first. */
 export function getCompletedTasks(): Task[] {
-  return tasks
-    .filter((t) => t.archivedAt === null && t.status === "complete")
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  const rows = db
+    .prepare(
+      `SELECT * FROM tasks
+       WHERE archived_at IS NULL AND status = 'complete'
+       ORDER BY updated_at DESC`,
+    )
+    .all() as unknown as TaskRow[];
+  return rows.map(rowToTask);
 }
 
 export function getArchivedTasks(): Task[] {
-  return tasks.filter((t) => t.archivedAt !== null);
+  const rows = db
+    .prepare(
+      `SELECT * FROM tasks WHERE archived_at IS NOT NULL ORDER BY archived_at DESC`,
+    )
+    .all() as unknown as TaskRow[];
+  return rows.map(rowToTask);
 }
 
 export function getTask(id: number): Task | undefined {
-  return tasks.find((t) => t.id === id);
+  const row = db
+    .prepare(`SELECT * FROM tasks WHERE id = ?`)
+    .get(id) as unknown as TaskRow | undefined;
+  return row ? rowToTask(row) : undefined;
 }
 
 export function createTask(input: NewTaskInput): Task {
   const now = new Date().toISOString();
-  const task: Task = {
-    id: nextId++,
-    title: input.title,
-    description: input.description,
-    dueDate: input.dueDate,
-    topic: input.topic,
-    status: "todo",
-    priority: input.priority,
-    archivedAt: null,
-    createdAt: now,
-    updatedAt: now,
-  };
-  tasks.push(task);
-  return task;
+  const result = db
+    .prepare(
+      `INSERT INTO tasks (title, description, due_date, topic, status, priority, archived_at, created_at, updated_at)
+       VALUES (?, ?, ?, ?, 'todo', ?, NULL, ?, ?)`,
+    )
+    .run(
+      input.title,
+      input.description,
+      input.dueDate,
+      input.topic,
+      input.priority,
+      now,
+      now,
+    );
+
+  return getTask(Number(result.lastInsertRowid))!;
 }
