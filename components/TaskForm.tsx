@@ -21,6 +21,9 @@ interface TaskFormProps {
   showStatus?: boolean;
 }
 
+const inputClass =
+  "border border-gray-200 rounded-xl px-3 py-2 bg-white text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+
 export default function TaskForm({
   action,
   submitLabel,
@@ -28,56 +31,56 @@ export default function TaskForm({
   showStatus = false,
 }: TaskFormProps) {
   return (
-    <form action={action} className="flex flex-col gap-4 max-w-md">
+    <form action={action} className="flex flex-col gap-4">
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Title</span>
+        <span className="text-sm font-medium text-gray-700">Title</span>
         <input
           type="text"
           name="title"
           required
           defaultValue={defaultValues?.title}
-          className="border rounded px-3 py-2"
+          className={inputClass}
         />
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Description</span>
+        <span className="text-sm font-medium text-gray-700">Description</span>
         <textarea
           name="description"
           rows={3}
           defaultValue={defaultValues?.description}
-          className="border rounded px-3 py-2"
+          className={inputClass}
         />
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Due Date</span>
+        <span className="text-sm font-medium text-gray-700">Due Date</span>
         <input
           type="date"
           name="dueDate"
           required
           defaultValue={defaultValues?.dueDate}
-          className="border rounded px-3 py-2"
+          className={inputClass}
         />
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Topic</span>
+        <span className="text-sm font-medium text-gray-700">Topic</span>
         <input
           type="text"
           name="topic"
           required
           defaultValue={defaultValues?.topic}
-          className="border rounded px-3 py-2"
+          className={inputClass}
         />
       </label>
 
       <label className="flex flex-col gap-1">
-        <span className="text-sm font-medium">Priority</span>
+        <span className="text-sm font-medium text-gray-700">Priority</span>
         <select
           name="priority"
           defaultValue={defaultValues?.priority ?? "medium"}
-          className="border rounded px-3 py-2"
+          className={inputClass}
         >
           {TASK_PRIORITIES.map((priority) => (
             <option key={priority} value={priority}>
@@ -89,11 +92,11 @@ export default function TaskForm({
 
       {showStatus && (
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-medium">Status</span>
+          <span className="text-sm font-medium text-gray-700">Status</span>
           <select
             name="status"
             defaultValue={defaultValues?.status}
-            className="border rounded px-3 py-2"
+            className={inputClass}
           >
             {TASK_STATUSES.map((status) => (
               <option key={status} value={status}>
@@ -106,7 +109,7 @@ export default function TaskForm({
 
       <button
         type="submit"
-        className="bg-black text-white rounded px-4 py-2 self-start"
+        className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl px-4 py-2 self-start transition-colors"
       >
         {submitLabel}
       </button>

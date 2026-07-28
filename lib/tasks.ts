@@ -96,3 +96,25 @@ export function createTask(input: NewTaskInput): Task {
 
   return getTask(Number(result.lastInsertRowid))!;
 }
+
+export function updateTask(
+  id: number,
+  input: NewTaskInput & { status: TaskStatus },
+): Task {
+  const now = new Date().toISOString();
+  db.prepare(
+    `UPDATE tasks
+     SET title = ?, description = ?, due_date = ?, topic = ?, priority = ?, status = ?, updated_at = ?
+     WHERE id = ?`,
+  ).run(
+    input.title,
+    input.description,
+    input.dueDate,
+    input.topic,
+    input.priority,
+    input.status,
+    now,
+    id,
+  );
+  return getTask(id)!;
+}

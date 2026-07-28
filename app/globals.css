@@ -3,6 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* The UI is light-only for now, so pin native form controls (inputs,
+     date picker, select arrow, scrollbars) to light rendering instead of
+     following the OS/browser dark-mode preference — otherwise browsers
+     render input text in a light color that's unreadable on our white
+     cards. */
+  color-scheme: light;
 }
 
 @theme inline {
@@ -10,13 +16,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
