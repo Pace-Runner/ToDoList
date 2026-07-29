@@ -16,8 +16,12 @@ const BUSY_TIMEOUT_IN_MILLISECONDS = 5000;
  * @param connection - the just-opened database connection to configure.
  */
 function configureConcurrency(connection: DatabaseSync): void {
-  connection.exec("PRAGMA journal_mode = WAL;");
+  // busy_timeout must be set first: switching journal mode itself needs a
+  // brief exclusive lock, and without a timeout already in effect, a
+  // competing process mid-switch fails that statement immediately instead
+  // of waiting for it.
   connection.exec(`PRAGMA busy_timeout = ${BUSY_TIMEOUT_IN_MILLISECONDS};`);
+  connection.exec("PRAGMA journal_mode = WAL;");
 }
 
 /**
