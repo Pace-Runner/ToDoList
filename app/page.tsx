@@ -4,6 +4,14 @@ import { TASK_SORT_FIELDS, TaskSortField } from "@/lib/types";
 import TaskRow from "@/components/TaskRow";
 import SortControls from "@/components/SortControls";
 
+/**
+ * Validates the raw `?sort=` query value against the fixed set of sort
+ * fields, so an invalid or missing value safely falls back to no sort
+ * (the default priority order) rather than reaching the database layer.
+ *
+ * @param value - the raw `sort` search param.
+ * @returns a valid TaskSortField, or undefined for the default order.
+ */
 function parseSort(value: string | string[] | undefined): TaskSortField | undefined {
   return TASK_SORT_FIELDS.includes(value as TaskSortField)
     ? (value as TaskSortField)

@@ -8,6 +8,9 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
   complete: "Complete",
 };
 
+// Every new task starts here; also the fallback when a form omits status.
+export const DEFAULT_STATUS: TaskStatus = "todo";
+
 export type TaskPriority = "low" | "medium" | "high";
 
 export const TASK_PRIORITIES: TaskPriority[] = ["low", "medium", "high"];
@@ -17,6 +20,9 @@ export const PRIORITY_LABELS: Record<TaskPriority, string> = {
   medium: "Medium",
   high: "High",
 };
+
+// Fallback when a form omits priority.
+export const DEFAULT_PRIORITY: TaskPriority = "medium";
 
 // Higher weight sorts first in the default (priority) ordering.
 export const PRIORITY_WEIGHT: Record<TaskPriority, number> = {

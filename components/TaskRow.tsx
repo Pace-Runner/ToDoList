@@ -9,6 +9,17 @@ const PRIORITY_DOT_COLOR: Record<Task["priority"], string> = {
   low: "bg-gray-300",
 };
 
+/**
+ * A single row in a task list. Renders a priority-coloured circle that
+ * doubles as a one-click complete/todo toggle, the title/topic/due-date
+ * (with an Overdue badge when isOverdue is true), and Edit/Archive
+ * actions.
+ *
+ * @param task - the task to render.
+ * @param readOnly - when true (used on the Archived page), renders a
+ *   plain static dot with no toggle, and hides the Edit/Archive
+ *   actions — archiving is intentionally one-directional.
+ */
 export default function TaskRow({
   task,
   readOnly = false,
