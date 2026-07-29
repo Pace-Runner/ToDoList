@@ -24,13 +24,6 @@ export const PRIORITY_LABELS: Record<TaskPriority, string> = {
 // Fallback when a form omits priority.
 export const DEFAULT_PRIORITY: TaskPriority = "medium";
 
-// Higher weight sorts first in the default (priority) ordering.
-export const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
-  high: 3,
-  medium: 2,
-  low: 1,
-};
-
 export interface Task {
   id: number;
   title: string;
